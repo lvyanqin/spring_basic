@@ -21,6 +21,8 @@ mvnw**
 *.iml
 *.ipr
 
+.git(*)/**
+
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
