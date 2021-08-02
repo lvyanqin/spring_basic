@@ -1,0 +1,84 @@
+package ${package.Service};
+
+import ${package.Entity}.${entity};
+import ${superServiceClassPackage};
+import ${dtoPackage}.${entity}Dto;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import javax.servlet.http.HttpServletResponse;
+#if(${AccountToken})
+import lynn.cms.entity.AccountToken;
+#end
+#if(${SysAccountToken})
+import lynn.manager.entity.SysAccountToken;
+#end
+import java.util.List;
+
+
+/**
+ * <p>
+ * $!{table.comment} 服务类
+ * </p>
+ *
+ * @author ${author}
+ * @since ${date}
+ */
+#if(${kotlin})
+interface ${table.serviceName} : ${superServiceClass}<${entity}>
+#else
+public interface ${table.serviceName} extends ${superServiceClass}<${entity}> {
+
+    /**
+     * 新增${table.comment}
+     * @param ${entityLowerName}Dto
+     * @param token
+     * @return
+     */
+    ${entity} add(${entity}Dto ${entityLowerName}Dto,#if(${AccountToken}) AccountToken token#elseif(${SysAccountToken}) SysAccountToken token#else AccountToken token#end);
+
+    /**
+     * 更新${table.comment}
+     * @param ${entityLowerName}Dto
+     * @param token
+     * @return
+     */
+    ${entity} update(${entity}Dto ${entityLowerName}Dto,#if(${AccountToken}) AccountToken token#elseif(${SysAccountToken}) SysAccountToken token#else AccountToken token#end);
+
+    /**
+     * 删除${table.comment}
+     * @param ${entityLowerName}Dto
+     * @param token
+     * @return
+     */
+    ${entity} delete(${entity}Dto ${entityLowerName}Dto,#if(${AccountToken}) AccountToken token#elseif(${SysAccountToken}) SysAccountToken token#else AccountToken token#end);
+
+    /**
+     * 分页查询${table.comment}
+     * @param ${entityLowerName}Dto
+     * @param ${entityLowerName}Page
+     * @return
+     */
+    IPage<${entity}> queryPage(${entity}Dto ${entityLowerName}Dto, Page<${entity}> ${entityLowerName}Page);
+
+    /**
+     * 导出${table.comment}
+     * @param ${entityLowerName}Dto
+     * @return
+     */
+    boolean export(${entity}Dto ${entityLowerName}Dto, HttpServletResponse response);
+
+    /**
+     * 校验${table.comment}名称
+     * @param ${entityLowerName}Dto
+     * @return
+     */
+    boolean checkName(${entity}Dto ${entityLowerName}Dto, boolean isAdd);
+
+    /**
+     *
+     * 查询所有${table.comment}
+     * @return
+     */
+    List<${entity}> queryAll(${entity}Dto ${entityLowerName}Dto);
+}
+#end

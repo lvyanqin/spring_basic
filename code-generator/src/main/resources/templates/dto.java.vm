@@ -1,0 +1,41 @@
+package ${dtoPackage};
+
+#foreach($field in ${table.fields})
+#if("$!field.columnType.pkg" != "")
+import ${field.columnType.pkg};
+#end
+#end
+import lombok.Data;
+import ${baseDtoPackage}.BaseDTO;
+
+/**
+ *
+ * $!{table.comment} DTO对象
+ *
+ *
+ * @author ${author}
+ * @since ${date}
+ */
+@Data
+public class ${entity}Dto extends BaseDTO {
+
+	/**
+	 * id
+	 */
+	private Long id;
+
+	#foreach ($field in ${table.fields})
+	#if("$!field.comment" != "")
+	/**
+	 * ${field.comment}
+	 */
+	#end
+	private ${field.propertyType} ${field.propertyName};
+
+	#end
+	/**
+     * 是否新增
+     */
+	private Boolean isAdd;
+
+}

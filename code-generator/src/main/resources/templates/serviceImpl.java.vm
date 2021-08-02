@@ -1,0 +1,254 @@
+package ${package.ServiceImpl};
+
+import ${package.Entity}.${entity};
+import ${package.Mapper}.${table.mapperName};
+import ${package.Service}.${table.serviceName};
+import ${superServiceImplClassPackage};
+import ${dtoPackage}.${entity}Dto;
+import ${enumPackage}.${entity}ExcelHeadersEnum;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import ExcelUtil;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import javax.servlet.http.HttpServletResponse;
+import EnableEnum;
+import JavaUtils;
+#if(${AccountToken})
+import lynn.cms.entity.AccountToken;
+#end
+#if(${SysAccountToken})
+import lynn.manager.entity.SysAccountToken;
+#end
+#if(${idType.equals("INPUT")})
+import org.springframework.beans.factory.annotation.Autowired;
+import com.github.wujun234.uid.UidGenerator;
+#end
+#foreach($element in ${table.fields})
+#if(${element.propertyType.equals("Date")})
+import java.util.Date;
+#elseif(${element.propertyType.equals("LocalDateTime")})
+import java.time.LocalDateTime;
+#else
+#end
+#end
+
+/**
+ * <p>
+ * $!{table.comment} 服务实现类
+ * </p>
+ *
+ * @author ${author}
+ * @since ${date}
+ */
+@Service
+#if(${kotlin})
+open class ${table.serviceImplName} : ${superServiceImplClass}<${table.mapperName}, ${entity}>(), ${table.serviceName} {
+
+}
+#else
+public class ${table.serviceImplName} extends ${superServiceImplClass}<${table.mapperName}, ${entity}> implements ${table.serviceName} {
+
+    #if(${idType.equals("INPUT")})
+    @Autowired
+    UidGenerator cachedUidGenerator;
+    #end
+
+    /**
+     * 新增${table.comment}
+     * @param ${entityLowerName}Dto
+     * @param token
+     * @return
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public ${entity} add(${entity}Dto ${entityLowerName}Dto,#if(${AccountToken}) AccountToken token#elseif(${SysAccountToken}) SysAccountToken token#else AccountToken token#end) {
+
+        ${entity} ${entityLowerName} = new ${entity}();
+        #if(${idType.equals("INPUT")})
+        ${entityLowerName}.setId(cachedUidGenerator.getUID());
+        #end
+        #foreach($element in ${table.fields})
+        #if(${element.propertyType.equals("Date")})
+        #set($dateCode="Date date" + ${foreach.index} + "= new Date()")
+        #set($dateParamter="date" + ${foreach.index})
+        ${dateCode};
+        ${entityLowerName}.set${element.customMap.upperFieldName}(${dateParamter});
+        #elseif(${element.propertyType.equals("LocalDateTime")})
+        #set($dateCode="LocalDateTime now" + ${foreach.index} + "= LocalDateTime.now()")
+        #set($dateParamter="now" + ${foreach.index})
+        ${dateCode};
+        ${entityLowerName}.set${element.customMap.upperFieldName}(${dateParamter});
+        #elseif(${element.propertyName.equals("createAccount")} || ${element.propertyName.equals("updateAccount")})
+        #if(${SysAccountToken})
+        ${entityLowerName}.set${element.customMap.upperFieldName}(token.getSysAccountId());
+        #elseif(${SysAccountToken})
+        ${entityLowerName}.set${element.customMap.upperFieldName}(token.accountId());
+        #end
+        #else
+        ${entityLowerName}.set${element.customMap.upperFieldName}(${entityLowerName}Dto.get${element.customMap.upperFieldName}());
+        #end
+        #end
+        ${entityLowerName}.insert();
+        return ${entityLowerName};
+    }
+
+    /**
+     * 更新${table.comment}
+     * @param ${entityLowerName}Dto
+     * @param token
+     * @return
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public ${entity} update(${entity}Dto ${entityLowerName}Dto,#if(${AccountToken}) AccountToken token#elseif(${SysAccountToken}) SysAccountToken token#else AccountToken token#end) {
+        ${entity} ${entityLowerName} = baseMapper.selectById(${entityLowerName}Dto.getId());
+        if (${entityLowerName} == null) {
+            return null;
+        }
+
+        #foreach($element in ${table.fields})
+        #if("$!element.propertyName" != "id" && "$!element.propertyName" != "createAccount" && "$!element.propertyName" != "createTime")
+        #if(${element.propertyType.equals("Date")} && $element.propertyName == "updateTime")
+        #set($dateCode="Date date" + ${foreach.index} + "= new Date()")
+        #set($dateParamter="date" + ${foreach.index})
+        ${dateCode};
+        ${entityLowerName}.set${element.customMap.upperFieldName}(${dateParamter});
+        #elseif(${element.propertyType.equals("LocalDateTime")} && $element.propertyName == "updateTime")
+        #set($dateCode="LocalDateTime now" + ${foreach.index} + "= LocalDateTime.now()")
+        #set($dateParamter="now" + ${foreach.index})
+        ${dateCode};
+        ${entityLowerName}.set${element.customMap.upperFieldName}(${dateParamter});
+        #elseif(${element.propertyName.equals("updateAccount")})
+        #if(${SysAccountToken})
+        ${entityLowerName}.set${element.customMap.upperFieldName}(token.getSysAccountId());
+        #elseif(${SysAccountToken})
+        ${entityLowerName}.set${element.customMap.upperFieldName}(token.accountId());
+        #end
+        #else
+        JavaUtils.INSTANCE.acceptIfNotNull(${entityLowerName}Dto.get${element.customMap.upperFieldName}(), ${entityLowerName}::set${element.customMap.upperFieldName});
+        #end
+        #end
+        #end
+        ${entityLowerName}.updateById();
+        return ${entityLowerName};
+    }
+
+    /**
+     * 删除${table.comment}
+     * @param ${entityLowerName}Dto
+     * @param token
+     * @return
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public ${entity} delete(${entity}Dto ${entityLowerName}Dto,#if(${AccountToken}) AccountToken token#elseif(${SysAccountToken}) SysAccountToken token#else AccountToken token#end) {
+        ${entity} ${entityLowerName} = baseMapper.selectById(${entityLowerName}Dto.getId());
+        if (${entityLowerName} == null) {
+            return null;
+        }
+        #foreach($element in ${table.fields})
+        #if(${element.propertyName.equals("updateAccount")})
+        #if(${SysAccountToken})
+        ${entityLowerName}.set${element.customMap.upperFieldName}(token.getSysAccountId());
+        #elseif(${SysAccountToken})
+        ${entityLowerName}.set${element.customMap.upperFieldName}(token.accountId());
+        #end
+        #end
+        #if(${element.propertyType.equals("Date")} && $element.propertyName == "updateTime")
+        #set($dateCode="Date date" + ${foreach.index} + "= new Date()")
+        #set($dateParamter="date" + ${foreach.index})
+        ${dateCode};
+        ${entityLowerName}.set${element.customMap.upperFieldName}(${dateParamter});
+        #elseif(${element.propertyType.equals("LocalDateTime")} && $element.propertyName == "updateTime")
+        #set($dateCode="LocalDateTime now" + ${foreach.index} + "= LocalDateTime.now()")
+        #set($dateParamter="now" + ${foreach.index})
+        ${dateCode};
+        ${entityLowerName}.set${element.customMap.upperFieldName}(${dateParamter});
+        #end
+        #end
+        ${entityLowerName}.setEnable(EnableEnum.DELETE.getValue());
+        ${entityLowerName}.updateById();
+
+        return ${entityLowerName};
+    }
+
+    /**
+     * 分页查询${table.comment}
+     * @param ${entityLowerName}Dto
+     * @param ${entityLowerName}Page
+     * @return
+     */
+    @Override
+    public IPage<${entity}> queryPage(${entity}Dto ${entityLowerName}Dto, Page<${entity}> ${entityLowerName}Page) {
+
+        return baseMapper.queryPage(${entityLowerName}Page, ${entityLowerName}Dto);
+    }
+
+    /**
+     * 导出${table.comment}
+     * @param ${entityLowerName}Dto
+     * @return
+     */
+    @Override
+    public boolean export(${entity}Dto ${entityLowerName}Dto, HttpServletResponse response) {
+
+        List<String> headers = new ArrayList<String>();
+        List<String> resultSetColumnNames = new ArrayList<String>();
+        ${entity}ExcelHeadersEnum[] values = ${entity}ExcelHeadersEnum.values();
+        for (${entity}ExcelHeadersEnum value : values) {
+            headers.add(value.getDesc());
+            resultSetColumnNames.add(value.getCode());
+        }
+
+        Integer count = baseMapper.queryCount(${entityLowerName}Dto);
+        return ExcelUtil.exportExcelToWebsite(response, count, "${table.comment}统计表", headers, (sheet, currentPage, pageSize, startRowCount, cellStyle) -> {
+        Page<Map<String, Object>> page = new Page<Map<String, Object>>(currentPage, pageSize);
+        IPage<Map<String, Object>> iPage = baseMapper.queryPageForExport(page, ${entityLowerName}Dto);
+        ExcelUtil.insertDataToExcel(sheet, iPage.getRecords(), resultSetColumnNames, cellStyle, startRowCount);
+        });
+    }
+
+    /**
+     * 校验${table.comment}名称
+     * @param ${entityLowerName}Dto
+     * @return
+     */
+    @Override
+    public boolean checkName(${entity}Dto ${entityLowerName}Dto, boolean isAdd) {
+
+        QueryWrapper<${entity}> ${entityLowerName}QueryWrapper = new QueryWrapper<${entity}>();
+        #foreach($element in ${table.fields})
+        #if($element.propertyName.indexOf("name") != -1)
+        ${entityLowerName}QueryWrapper.eq("$element.name", ${entityLowerName}Dto.get${element.customMap.upperFieldName}());
+        #end
+        #end
+        ${entityLowerName}QueryWrapper.ne("enable", EnableEnum.DELETE.getValue());
+        ${entityLowerName}QueryWrapper.ne("enable", EnableEnum.DELETED.getValue());
+        //更新时查询
+        if (!isAdd) {
+            ${entityLowerName}QueryWrapper.ne("id", ${entityLowerName}Dto.getId());
+        }
+
+        Integer count = baseMapper.selectCount(${entityLowerName}QueryWrapper);
+        if (count > 0) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     *
+     * 查询所有${table.comment}
+     * @return
+     */
+    public List<${entity}> queryAll(${entity}Dto ${entityLowerName}Dto) {
+        return baseMapper.queryAll(${entityLowerName}Dto);
+    }
+
+}
+#end

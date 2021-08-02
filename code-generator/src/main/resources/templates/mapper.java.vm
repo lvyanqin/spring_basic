@@ -1,0 +1,56 @@
+package ${package.Mapper};
+
+import ${package.Entity}.${entity};
+import ${superMapperClassPackage};
+import ${dtoPackage}.${entity}Dto;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import org.apache.ibatis.annotations.Param;
+import java.util.Map;
+import java.util.List;
+
+/**
+ * <p>
+ * $!{table.comment} Mapper 接口
+ * </p>
+ *
+ * @author ${author}
+ * @since ${date}
+ */
+#if(${kotlin})
+interface ${table.mapperName} : ${superMapperClass}<${entity}>
+#else
+public interface ${table.mapperName} extends ${superMapperClass}<${entity}> {
+
+    /**
+     * 分页查询${table.comment}
+     * @param ${entityLowerName}Page
+     * @param ${entityLowerName}Dto
+     * @return
+     */
+    IPage<${entity}> queryPage(Page<${entity}> ${entityLowerName}Page, @Param("dto") ${entity}Dto ${entityLowerName}Dto);
+
+    /**
+     * 导出查询数量
+     * @param ${entityLowerName}Dto
+     * @return
+     */
+    Integer queryCount(@Param("dto") ${entity}Dto ${entityLowerName}Dto);
+
+    /**
+     * 导出分页查询${table.comment}
+     * @param ${entityLowerName}Page
+     * @param ${entityLowerName}Dto
+     * @return
+     */
+    IPage<Map<String, Object>> queryPageForExport(Page<Map<String, Object>> ${entityLowerName}Page, @Param("dto") ${entity}Dto ${entityLowerName}Dto);
+
+    /**
+     *
+     * 查询所有${table.comment}
+     * @return
+     */
+    List<${entity}> queryAll(@Param("dto") ${entity}Dto ${entityLowerName}Dto);
+
+}
+#end
