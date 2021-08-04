@@ -55,6 +55,18 @@
             <version>1.7.8</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- 检测应用状态 begin -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+        </dependency>
+        <!-- 检测应用状态 end -->
+
     </dependencies>
 
     <build>
