@@ -2,13 +2,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>yyc-parent</artifactId>
-        <groupId>com.sungo</groupId>
-        <version>0.1</version>
-    </parent>
     <modelVersion>4.0.0</modelVersion>
 
+    <groupId>lynn.util</groupId>
     <artifactId>yyc-util</artifactId>
     <version>0.1</version>
     <name>${project.artifactId}</name>
@@ -117,6 +113,18 @@
 		    <groupId>net.lingala.zip4j</groupId>
 		    <artifactId>zip4j</artifactId>
 		</dependency>
+
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.17</version>
+        </dependency>
+        <!-- simple logg facade for java（slf4-api.jar）日志接口 和 log4j具体日志系统之间的适配器 -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.25</version>
+        </dependency>
     </dependencies>
 
 
@@ -125,6 +133,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
+                </configuration>
             </plugin>
         </plugins>
 
